@@ -22,7 +22,7 @@ export default function MyBooking() {
       try {
 
         const res = await axios.get(
-          "http://127.0.0.1:8000/trainbookingapp/getbookings/",
+          "https://bus-booking-django.onrender.com/trainbookingapp/getbookings/",
           {
             headers: {
               Authorization: `Bearer ${accesstoken}`

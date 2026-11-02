@@ -29,7 +29,7 @@ export default function Confirmation() {
     };
 
    axios.post(
-  "http://127.0.0.1:8000/trainbookingapp/getbookings/",
+  "https://bus-booking-django.onrender.com/trainbookingapp/getbookings/",
   bookingData,
   {
     headers: {
