@@ -11,6 +11,7 @@ import Seats from './Seats'
 import Booking from './Booking'
 import Confirmation from './Confirmation'
 import MyBooking from './Mybooking'
+import Login from './Login'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -26,6 +27,7 @@ function App() {
         <Route path="/booking" element={<Booking/>}/>
         <Route path='/confirmation' element={<Confirmation/>}/>
         <Route path='/mybookings' element={<MyBooking/>}/>
+        <Route path='/login' element={<Login/>}/>
       </Routes>
       </BrowserRouter>
     </>

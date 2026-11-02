@@ -1,33 +1,55 @@
 
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function MyBooking() {
   const navigate = useNavigate();
 
   // Sample booking data
-  const [bookings, setBookings] = useState([
-    {
-      bookingId: "BUS1001",
-      name: "Dinesh Kumar",
-      from: "Hyderabad",
-      to: "Bangalore",
-      date: "2026-11-05",
-      seats: ["A1", "A3"],
-      totalPrice: 2400,
-      status: "Confirmed",
-    },
-    {
-      bookingId: "BUS1002",
-      name: "Rahul Kumar",
-      from: "Chennai",
-      to: "Hyderabad",
-      date: "2026-11-10",
-      seats: ["B1"],
-      totalPrice: 900,
-      status: "Confirmed",
-    },
-  ]);
+  const [bookings, setBookings] = useState([]);
+ useEffect(() => {
+
+    const getBookings = async () => {
+
+      const accesstoken = sessionStorage.getItem("access");
+
+      if (!accesstoken) {
+        setMessage("Please login first");
+        return;
+      }
+
+      try {
+
+        const res = await axios.get(
+          "http://127.0.0.1:8000/trainbookingapp/getbookings/",
+          {
+            headers: {
+              Authorization: `Bearer ${accesstoken}`
+            }
+          }
+        );
+
+        console.log(res.data);
+        setBookings(res.data);
+
+      } catch (err) {
+
+        console.log("Status:", err.response?.status);
+        console.log("Error:", err.response?.data);
+
+        setMessage(
+          err.response?.status === 401
+            ? "Session expired. Please login again."
+            : "Unable to fetch bookings"
+        );
+
+      }
+    };
+
+    getBookings();
+
+  }, []);
 
   function cancelBooking(bookingId) {
     const confirmCancel = window.confirm(
@@ -80,9 +102,7 @@ export default function MyBooking() {
           <div className="bg-white p-6 rounded-xl shadow">
             <p className="text-gray-500">Confirmed Bookings</p>
             <h2 className="text-3xl font-bold text-green-600 mt-2">
-              {bookings.filter(
-                (booking) => booking.status === "Confirmed"
-              ).length}
+              {bookings.length}
             </h2>
           </div>
 
@@ -91,7 +111,7 @@ export default function MyBooking() {
             <h2 className="text-3xl font-bold text-red-600 mt-2">
               ₹
               {bookings.reduce(
-                (total, booking) => total + booking.totalPrice,
+                (total, booking) => total + booking.amount,
                 0
               )}
             </h2>
@@ -120,11 +140,11 @@ export default function MyBooking() {
             <tbody>
               {bookings.map((booking) => (
                 <tr
-                  key={booking.bookingId}
+                  key={booking.booking_id}
                   className="border-b hover:bg-gray-50"
                 >
                   <td className="p-4 font-semibold">
-                    {booking.bookingId}
+                    {booking.booking_id}
                   </td>
 
                   <td className="p-4">
@@ -132,31 +152,31 @@ export default function MyBooking() {
                   </td>
 
                   <td className="p-4">
-                    {booking.from} → {booking.to}
+                    {booking.source} → {booking.destination}
                   </td>
 
                   <td className="p-4">
-                    {booking.date}
+                    {booking.journey_date}
                   </td>
 
                   <td className="p-4">
-                    {booking.seats.join(", ")}
+                    {booking.seats}
                   </td>
 
                   <td className="p-4 font-bold">
-                    ₹{booking.totalPrice}
+                    ₹{booking.amount}
                   </td>
 
                   <td className="p-4">
                     <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-                      {booking.status}
+                      confirm
                     </span>
                   </td>
 
                   <td className="p-4">
                     <button
                       onClick={() =>
-                        cancelBooking(booking.bookingId)
+                        cancelBooking(booking.booking_id)
                       }
                       className="bg-red-100 text-red-600 hover:bg-red-600 hover:text-white px-3 py-2 rounded-lg"
                     >

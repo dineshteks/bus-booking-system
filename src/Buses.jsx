@@ -34,10 +34,10 @@ const buses = [
 export default function Buses() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-
+  const today = new Date().toISOString().split("T")[0];
   const from = params.get("from") || "Hyderabad";
   const to = params.get("to") || "Bangalore";
-  const date = params.get("date") || "";
+  const date = params.get("date") || today;
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
